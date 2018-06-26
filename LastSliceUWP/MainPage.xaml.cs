@@ -48,41 +48,10 @@ namespace LastSliceUWP
                 {
                     string puzzle = await challengeService.GetPuzzle();
                     Problem problem = JsonConvert.DeserializeObject<Problem>(puzzle);
+                    DateTime startTime = problem.TimeIssued;
+
                     ResultText.Text = puzzle;
-                    string[] ingredients = new string[] {
-                        "ANCHOVY",
-                        "BACON",
-                        "CHEESE",
-                        "GARLIC",
-                        "GREENPEPPER",
-                        "HABANERO",
-                        "JALAPENO",
-                        "MUSHROOM",
-                        "OLIVE",
-                        "ONION",
-                        "PINEAPPLE",
-                        "PEPPERONI",
-                        "SAUSAGE",
-                        "TOMATOES"
-                    };
-
-                    string[] shortIngredients = new string[] {
-                        "AN",
-                        "BA",
-                        "CH",
-                        "GA",
-                        "GB",
-                        "HB",
-                        "JP",
-                        "MR",
-                        "OL",
-                        "ON",
-                        "PA",
-                        "PP",
-                        "SA",
-                        "TM"
-                    };
-
+                    
                     int maxLength = 0;
                     foreach(string s in problem.Puzzle["Lines"])
                         if (s.Length > maxLength)
@@ -98,7 +67,6 @@ namespace LastSliceUWP
                             if (j < problem.Puzzle["Lines"][i].Length)
                             {
                                 grid[i][j] = problem.Puzzle["Lines"][i][j];
-                                // Debug.WriteLine("("+i+","+j+") = " + grid[i][j]);
                             }
                             else
                             {
@@ -109,14 +77,10 @@ namespace LastSliceUWP
 
                     Solver solver = new Solver();
                     Debug.WriteLine("*****************");
-                    
-                    //for(int i = 0; i < 15; i++) {
-                    //    Console.WriteLine(problem.Puzzle["Values"][i]);
-                    //}
 
                     Solution soln = new Solution();
                     soln.PuzzleId = problem.Id;
-                    soln.Initials = "vak1793";
+                    soln.Initials = "VAK";
                     soln.Words = solver.findWords(grid, problem.Puzzle["Lines"].Length, maxLength);
                     Debug.WriteLine("*****************");
                     //Word w = new Word();
@@ -128,7 +92,8 @@ namespace LastSliceUWP
 
                     // TODO: Now show your Swagger and find the solution.
 
-                    string solution = JsonConvert.SerializeObject(soln); ;
+                    Debug.WriteLine("Time taken = {0}s", DateTime.Now.Subtract(startTime).Seconds);
+                    string solution = JsonConvert.SerializeObject(soln);
                     string solutionResponse = await challengeService.PostSolutionToPuzzle(solution);
 
                     ResultText.Text = solutionResponse;

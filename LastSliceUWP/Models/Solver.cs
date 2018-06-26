@@ -25,10 +25,28 @@ namespace LastSliceUWP.Models
             "SAUSAGE",
             "TOMATOES",
             // not sure
-            "MOZZARELLA",
-            "SALAMI",
-            "TUNA",
-            "PEPPERONCINI"
+            //"MOZZARELLA",
+            //"SALAMI",
+            //"TUNA",
+            //"PEPPERONCINI",
+            //"BITCOIN"
+        };
+
+        string[] shortIngredients = new string[] {
+            "AN",
+            "BA",
+            "CH",
+            "GA",
+            "GB",
+            "HB",
+            "JP",
+            "MR",
+            "OL",
+            "ON",
+            "PA",
+            "PP",
+            "SA",
+            "TM"
         };
 
         bool isValidSubstring(string str)
@@ -92,15 +110,9 @@ namespace LastSliceUWP.Models
 
         void findWordsUtil(ref List<Word> found, ref List<string> toppings, char[][] boggle, bool[][] visited, int M, int N, int i, int j, string str, string dir, int x, int y)
         {
-            // Mark current cell as visited and append current character
-            // to str
-            // Console.WriteLine("(" + i + ", " + j + ")");
-
             visited[i][j] = true;
             str = str + boggle[i][j];
-            //Console.WriteLine("(" + i + ", " + j + ") = " + str);
-
-            // If str is present in dictionary, then print it
+            
             if (isValidString(str) && !toppings.Contains(str))
             {
                 Word word = new Word();
@@ -136,17 +148,12 @@ namespace LastSliceUWP.Models
                             );
                         }
 
-            // Erase current character from string and mark visited
-            // of current cell as false
             str.Remove(str.Length - 1);
             visited[i][j] = false;
         }
 
         public Word[] findWords(char[][] grid, int numRows, int numCols)
         {
-            //int M = 15, N = 20;
-            // Mark all characters as not visited
-
             bool[][] visited = new bool[numRows][];
             for(int i = 0; i < numRows; i++)
             {
@@ -163,43 +170,6 @@ namespace LastSliceUWP.Models
                     }
                 }
             }
-
-            //    {
-            //    new bool[] { false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true },
-            //    new bool[] { false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true },
-            //    new bool[] { false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true },
-            //    new bool[] { false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true },
-            //    new bool[] { false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true },
-            //    new bool[] { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
-            //    new bool[] { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
-            //    new bool[] { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
-            //    new bool[] { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
-            //    new bool[] { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
-            //    new bool[] { false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true },
-            //    new bool[] { false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true },
-            //    new bool[] { false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true },
-            //    new bool[] { false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true },
-            //    new bool[] { false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true }
-            //};
-
-        //    char[][] boggle = {
-        //    new char[] { 'L', 'A', 'P', 'E', 'N', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
-        //    new char[] { 'V', 'B', 'T', 'J', 'E', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
-        //    new char[] { 'R', 'H', 'S', 'U', 'M', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
-        //    new char[] { 'S', 'G', 'E', 'I', 'G', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
-        //    new char[] { 'T', 'T', 'U', 'B', 'T', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
-        //    new char[] { 'M', 'N', 'H', 'H', 'P', 'U', 'G', 'I', 'O', 'O', 'P', 'I', 'S', 'G', 'J', 'A', 'H', 'O', 'N', 'E' },
-        //    new char[] { 'M', 'L', 'S', 'M', 'I', 'N', 'M', 'A', 'N', 'S', 'U', 'M', 'O', 'M', 'H', 'J', 'J', 'O', 'I', 'R' },
-        //    new char[] { 'O', 'P', 'A', 'P', 'O', 'A', 'S', 'L', 'L', 'O', 'O', 'E', 'N', 'H', 'I', 'O', 'S', 'M', 'G', 'A' },
-        //    new char[] { 'R', 'V', 'U', 'B', 'P', 'E', 'J', 'R', 'M', 'E', 'R', 'B', 'H', 'M', 'O', 'O', 'G', 'S', 'I', 'E' },
-        //    new char[] { 'A', 'P', 'S', 'I', 'U', 'P', 'V', 'I', 'I', 'E', 'N', 'E', 'B', 'T', 'T', 'P', 'O', 'R', 'P', 'O' },
-        //    new char[] { 'B', 'B', 'A', 'R', 'M', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
-        //    new char[] { 'V', 'B', 'G', 'O', 'M', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
-        //    new char[] { 'E', 'O', 'E', 'L', 'S', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
-        //    new char[] { 'L', 'P', 'L', 'H', 'S', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' },
-        //    new char[] { 'M', 'L', 'P', 'O', 'O', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' }
-        //};
-
 
              for (int i = 0; i < numRows; i++)
              {
