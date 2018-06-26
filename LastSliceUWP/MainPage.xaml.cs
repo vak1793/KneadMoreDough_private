@@ -83,24 +83,49 @@ namespace LastSliceUWP
                         "TM"
                     };
 
+                    int maxLength = 0;
+                    foreach(string s in problem.Puzzle["Lines"])
+                        if (s.Length > maxLength)
+                            maxLength = s.Length;
+
+                    char[][] grid = new char[problem.Puzzle["Lines"].Length][];
+
+                    for(int i = 0; i < problem.Puzzle["Lines"].Length; i++)
+                    {
+                        grid[i] = new char[maxLength];
+                        for (int j = 0; j < 20; j++)
+                        {
+                            if (j < problem.Puzzle["Lines"][i].Length)
+                            {
+                                grid[i][j] = problem.Puzzle["Lines"][i][j];
+                                // Debug.WriteLine("("+i+","+j+") = " + grid[i][j]);
+                            }
+                            else
+                            {
+                                grid[i][j] = ' ';
+                            }
+                        }
+                    }
+
                     Solver solver = new Solver();
                     Debug.WriteLine("*****************");
-                    solver.findWords();
-                    Debug.WriteLine("*****************");
+                    
                     //for(int i = 0; i < 15; i++) {
                     //    Console.WriteLine(problem.Puzzle["Values"][i]);
                     //}
 
                     Solution soln = new Solution();
                     soln.PuzzleId = problem.Id;
-                    soln.Initials = "V.A.K";
-                    Word w = new Word();
-                    w.word = problem.Puzzle["Lines"][0];
-                    w.x = 0;
-                    w.y = 0;
-                    w.direction = "EEEE";
-                    soln.Words = new Word[] { w };
-                    
+                    soln.Initials = "vak1793";
+                    soln.Words = solver.findWords(grid, problem.Puzzle["Lines"].Length, maxLength);
+                    Debug.WriteLine("*****************");
+                    //Word w = new Word();
+                    //w.word = problem.Puzzle["Lines"][0];
+                    //w.x = 0;
+                    //w.y = 0;
+                    //w.direction = "EEEE";
+                    //soln.Words = new Word[] { w };
+
                     // TODO: Now show your Swagger and find the solution.
 
                     string solution = JsonConvert.SerializeObject(soln); ;
