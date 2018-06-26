@@ -25,11 +25,24 @@ namespace LastSliceUWP.Models
             "SAUSAGE",
             "TOMATOES",
             // not sure
-            //"MOZZARELLA",
-            //"SALAMI",
-            //"TUNA",
-            //"PEPPERONCINI",
-            //"BITCOIN"
+            "MOZZARELLA",
+            "PROVOLONE",
+            "FETA",
+            "CHEDDAR",
+            "PARMESAN",
+            "ROMANO",
+            "ASIAGO",
+            "BEEF",
+            "STEAK",
+            "CHICKEN",
+            "HAM",
+            "SALAMI",
+            "SPINACH",
+            "TUNA",
+            "PEPPERONCINI",
+            "BITCOIN",
+            "CORN",
+            "CAYENNE"
         };
 
         string[] shortIngredients = new string[] {
