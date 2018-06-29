@@ -50,7 +50,7 @@ namespace LastSliceUWP
                     Problem problem = JsonConvert.DeserializeObject<Problem>(puzzle);
                     DateTime startTime = problem.TimeIssued;
                     Debug.WriteLine("Issued Time = {0}", startTime);
-                    Debug.WriteLine("Start Time = {0}", DateTime.Now);
+                    //Debug.WriteLine("Start Time = {0}", DateTime.Now);
 
                     ResultText.Text = puzzle;
                     
@@ -94,7 +94,7 @@ namespace LastSliceUWP
 
                     // TODO: Now show your Swagger and find the solution.
 
-                    Debug.WriteLine("End Time = {0}", DateTime.Now);
+                    Debug.WriteLine("Time taken = {0}", DateTime.Now - startTime);
                     string solution = JsonConvert.SerializeObject(soln);
                     string solutionResponse = await challengeService.PostSolutionToPuzzle(solution);
 

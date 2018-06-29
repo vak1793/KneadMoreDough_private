@@ -11,24 +11,20 @@ namespace LastSliceUWP.Models
     {
         public string[] Ingredients = {
             "ANCHOVY",
-            "ANCHOVIES",
             "BACON",
             "CHEESE",
+            "FROG",
             "GARLIC",
             "GREENPEPPERS",
-            "HABENEROS",
             "HABENERO",
-            "JALAPENOS",
             "JALAPENO",
             "MUSHROOMS",
             "OLIVES",
             "ONIONS",
-            "PINEAPPLES",
+            "PINEAPPLE",
             "PEPPERONI",
-            "SAUSAGES",
             "SAUSAGE",
             "TOMATOES",
-            "TOMATO",
             // not sure
             //"MOZZARELLA",
             //"PROVOLONE",
@@ -41,6 +37,7 @@ namespace LastSliceUWP.Models
             //"STEAK",
             //"CHICKEN",
             //"HAM",
+            //"PORK",
             //"SALAMI",
             //"SPINACH",
             //"TUNA",
@@ -55,7 +52,12 @@ namespace LastSliceUWP.Models
             //"PROSCIUTTO",
             //"OREGANO",
             //"MARINARA",
-            //"CRUST"
+            //"CRUST",
+            //"TURKEY",
+            //"CAJUN",
+            //"SAUCE",
+            //"SHRIMP",
+            //"PRAWNS",
         };
 
         string[] shortIngredients = new string[] {
@@ -95,6 +97,126 @@ namespace LastSliceUWP.Models
                 if (String.Compare(str, this.Ingredients[i]) == 0)
                     return true;
             return false;
+        }
+
+        bool singleDirection(char[][] grid, Word word)
+        {
+
+            string direction = word.direction;
+            int i = word.y, j = word.x;
+            string[] steps = direction.Split(',');
+            string lastStep = steps[0];
+
+            for(int n=0; n < steps.Length; n++)
+            {
+                bool sideChanged;
+                var nextPos = moveInDirection(steps[n], j, i, out sideChanged);
+                if (sideChanged && n < steps.Length - 1)
+                {
+                    // reverse steps[n + 1]
+                    bool temp;
+                    string reverseDir = reverse(steps[n + 1]);
+                    var reversePos = moveInDirection(reverseDir, nextPos[0], nextPos[1], out temp);
+                    if (reversePos[0] != j || reversePos[1] != i)
+                        return false;
+                    i = nextPos[1];
+                    j = nextPos[0];
+                    lastStep = steps[n + 1];
+                }
+                else
+                {
+                    if (steps[n] != lastStep)
+                        return false;
+                    i = nextPos[1];
+                    j = nextPos[0];
+                    lastStep = steps[n];
+                }
+            }
+            
+            return true;
+        }
+
+        string reverse(string dir)
+        {
+            char[] letters = dir.ToCharArray();
+
+            for(int i=0;i< letters.Length; i++)
+                switch(letters[i])
+                {
+                    case 'N':
+                        letters[i] = 'S';
+                        break;
+                    case 'S':
+                        letters[i] = 'N';
+                        break;
+                    case 'E':
+                        letters[i] = 'W';
+                        break;
+                    case 'W':
+                        letters[i] = 'E';
+                        break;
+                }
+            
+            return new string(letters);
+        }
+
+        int[] moveInDirection(string direction, int x, int y, out bool sideChanged)
+        {
+            int newX = x, newY = y;
+            sideChanged = false;
+
+            switch(direction)
+            {
+                case "N":
+                    newY--;
+                    break;
+                case "S":
+                    newY++;
+                    break;
+                case "E":
+                    newX++;
+                    break;
+                case "W":
+                    newX--;
+                    break;
+                case "NE":
+                    newY--;
+                    newX++;
+                    break;
+                case "NW":
+                    newY--;
+                    newX--;
+                    break;
+                case "SE":
+                    newY++;
+                    newX++;
+                    break;
+                case "SW":
+                    newY++;
+                    newX--;
+                    break;
+            }
+
+            if(newX < 0 || newX > 19)
+            {
+                sideChanged = true;
+            } else if(newY < 0 || newY > 14)
+            {
+                sideChanged = true;
+            } else if(newX > 4 && newX < 20 && ((newY >= 0 && newY < 5) || (newY > 9 && newY < 15)))
+            {
+                sideChanged = true;
+            }
+
+            // if side changed, wrap x and y
+            if(sideChanged)
+            {
+                var nextCell = wrapCells(newY, newX);
+                newY = nextCell[0];
+                newX = nextCell[1];
+            }
+            
+            return new int[] { newX, newY };
         }
 
         string getDirection(int row, int col, int i, int j)
@@ -139,7 +261,7 @@ namespace LastSliceUWP.Models
             visited[i][j] = true;
             str = str + boggle[i][j];
 
-            if (isValidString(str) && !toppings.Contains(str))
+            if (isValidString(str))
             {
                 Word word = new Word();
                 word.x = y;
@@ -148,9 +270,9 @@ namespace LastSliceUWP.Models
                 word.direction = dir.Substring(0, dir.Length - 1);
                 found.Add(word);
                 toppings.Add(str);
-                Debug.WriteLine(str);
-                Debug.WriteLine("({0},{1})", y, x);
-                Debug.WriteLine(dir.Substring(0, dir.Length-1));
+                //Debug.WriteLine(str);
+                //Debug.WriteLine("({0},{1})", y, x);
+                //Debug.WriteLine(word.direction);
             }
 
             // Traverse 8 adjacent cells of boggle[i][j]
@@ -194,111 +316,13 @@ namespace LastSliceUWP.Models
                     string dir = getDirection(row, col, i, j);
                     Dictionary<int, int> cell = new Dictionary<int, int>();
 
-                    int rowToAdd = row, colToAdd = col;
+                    int rowToAdd, colToAdd;
+                    var nextCell = wrapCells(row, col);
+                    rowToAdd = nextCell[0];
+                    colToAdd = nextCell[1];
 
-                    if(col == -1)
-                    {
-                        if(row >= 0 && row < 5)
-                        {
-                            // r = 5, c = 15 + row
-                            rowToAdd = 5;
-                            colToAdd = row + 15;
-                        } else if (row >= 5 && row < 10)
-                        {
-                            // r = row, c = 19
-                            rowToAdd = row;
-                            colToAdd = 19;
-                        }
-                        else if (row >= 10 && row < 15)
-                        {
-                            // r = 9, c = 29 - row
-                            rowToAdd = 9;
-                            colToAdd = 29 - row;
-                        }
-                    } else if(col == 5)
-                    {
-                        if(row >= 0 && row < 5)
-                        {
-                            // r = 5, c = 9 - row
-                            rowToAdd = 5;
-                            colToAdd = 9 - row;
-                        } else if (row >= 10 && row < 15)
-                        {
-                            // r = 9, c = row - 5
-                            rowToAdd = 9;
-                            colToAdd = row - 5;
-                        }
-                    } else if(col == 20)
-                    {
-                        if(row >= 5 && row < 10)
-                        {
-                            rowToAdd = row;
-                            colToAdd = 0;
-                        }
-                    }
 
-                    if(row == -1)
-                    {
-                        if(col >=0 && col < 5)
-                        {
-                            // r = 5, c = 14 - col
-                            rowToAdd = 5;
-                            colToAdd = 14 - col;
-                        }
-                    }
-                    else if(row == 4)
-                    {
-                        if(col >= 5 && col < 10)
-                        {
-                            //r = 9 - col, c = 4
-                            rowToAdd = 9 - col;
-                            colToAdd = 4;
-                        }
-                        else if(col >= 10 && col < 15)
-                        {
-                            //r = 0, c = 14 - col
-                            rowToAdd = 0;
-                            colToAdd = 14 - col;
-                        }
-                        else if (col >= 15 && col < 20)
-                        {
-                            //r = 15 - col, col = 0
-                            rowToAdd = 15 - col;
-                            colToAdd = 0;
-                        }
-                    }
-                    else if (row == 10)
-                    {
-                        if (col >= 5 && col < 10)
-                        {
-                            //r = col + 5, c = 4
-                            rowToAdd = col + 5;
-                            colToAdd = 4;
-                        }
-                        else if (col >= 10 && col < 15)
-                        {
-                            //r = 14, c = 14 - col
-                            rowToAdd = 14;
-                            colToAdd = 14 - col;
-                        }
-                        else if (col >= 15 && col < 20)
-                        {
-                            //r = 29 - col, col = 0
-                            rowToAdd = 29 - col;
-                            colToAdd = 0;
-                        }
-                    }
-                    else if (row == 15)
-                    {
-                        if (col >= 0 && col < 5)
-                        {
-                            //r = 0, c = col
-                            rowToAdd = 0;
-                            colToAdd = col;
-                        }
-                    }
-
-                    if(rowToAdd >=0 && rowToAdd < 15 && colToAdd >=0 && colToAdd < 20)
+                    if (rowToAdd >=0 && rowToAdd < 15 && colToAdd >=0 && colToAdd < 20)
                     {
                         cell.Add(rowToAdd, colToAdd);
                         var cellWithDir = new Dictionary<string, Dictionary<int, int>>();
@@ -308,6 +332,119 @@ namespace LastSliceUWP.Models
                 }
 
             return cells;
+        }
+
+        public int[] wrapCells(int row, int col)
+        {
+            int rowToAdd = row, colToAdd = col;
+
+            if (col == -1)
+            {
+                if (row >= 0 && row < 5)
+                {
+                    // r = 5, c = 15 + row
+                    rowToAdd = 5;
+                    colToAdd = row + 15;
+                }
+                else if (row >= 5 && row < 10)
+                {
+                    // r = row, c = 19
+                    rowToAdd = row;
+                    colToAdd = 19;
+                }
+                else if (row >= 10 && row < 15)
+                {
+                    // r = 9, c = 29 - row
+                    rowToAdd = 9;
+                    colToAdd = 29 - row;
+                }
+            }
+            else if (col == 5)
+            {
+                if (row >= 0 && row < 5)
+                {
+                    // r = 5, c = 9 - row
+                    rowToAdd = 5;
+                    colToAdd = 9 - row;
+                }
+                else if (row >= 10 && row < 15)
+                {
+                    // r = 9, c = row - 5
+                    rowToAdd = 9;
+                    colToAdd = row - 5;
+                }
+            }
+            else if (col == 20)
+            {
+                if (row >= 5 && row < 10)
+                {
+                    rowToAdd = row;
+                    colToAdd = 0;
+                }
+            }
+
+            if (row == -1)
+            {
+                if (col >= 0 && col < 5)
+                {
+                    // r = 5, c = 14 - col
+                    rowToAdd = 5;
+                    colToAdd = 14 - col;
+                }
+            }
+            else if (row == 4)
+            {
+                if (col >= 5 && col < 10)
+                {
+                    //r = 9 - col, c = 4
+                    rowToAdd = 9 - col;
+                    colToAdd = 4;
+                }
+                else if (col >= 10 && col < 15)
+                {
+                    //r = 0, c = 14 - col
+                    rowToAdd = 0;
+                    colToAdd = 14 - col;
+                }
+                else if (col >= 15 && col < 20)
+                {
+                    //r = 15 - col, col = 0
+                    rowToAdd = 15 - col;
+                    colToAdd = 0;
+                }
+            }
+            else if (row == 10)
+            {
+                if (col >= 5 && col < 10)
+                {
+                    //r = col + 5, c = 4
+                    rowToAdd = col + 5;
+                    colToAdd = 4;
+                }
+                else if (col >= 10 && col < 15)
+                {
+                    //r = 14, c = 14 - col
+                    rowToAdd = 14;
+                    colToAdd = 14 - col;
+                }
+                else if (col >= 15 && col < 20)
+                {
+                    //r = 29 - col, col = 0
+                    rowToAdd = 29 - col;
+                    colToAdd = 0;
+                }
+            }
+            else if (row == 15)
+            {
+                if (col >= 0 && col < 5)
+                {
+                    //r = 0, c = col
+                    rowToAdd = 0;
+                    colToAdd = col;
+                }
+            }
+
+            return new int[] { rowToAdd, colToAdd };
         }
 
         public Word[] findWords(char[][] grid, int numRows, int numCols)
@@ -352,6 +489,21 @@ namespace LastSliceUWP.Models
                     }
                     findWordsUtil(ref foundWords, ref added, grid, visited, numRows, numCols, i, j, str, "", i, j);
                 }
+
+            Debug.WriteLine("*****************");
+
+            for(int i = foundWords.Count - 1; i >= 0; i--)
+                if (!singleDirection(grid, foundWords[i]))
+                    foundWords.RemoveAt(i);
+
+            foreach(Word word in foundWords)
+            {
+                string dir = word.direction.Split(',')[0];
+                word.direction = dir;
+                Debug.WriteLine(word.word);
+                Debug.WriteLine("({0},{1})", word.x, word.y);
+                Debug.WriteLine(word.direction);
+            }
 
             return foundWords.ToArray();
         }
