@@ -11,38 +11,51 @@ namespace LastSliceUWP.Models
     {
         public string[] Ingredients = {
             "ANCHOVY",
+            "ANCHOVIES",
             "BACON",
             "CHEESE",
             "GARLIC",
-            "GREENPEPPER",
-            "HABANERO",
+            "GREENPEPPERS",
+            "HABENEROS",
+            "HABENERO",
+            "JALAPENOS",
             "JALAPENO",
-            "MUSHROOM",
-            "OLIVE",
-            "ONION",
-            "PINEAPPLE",
+            "MUSHROOMS",
+            "OLIVES",
+            "ONIONS",
+            "PINEAPPLES",
             "PEPPERONI",
+            "SAUSAGES",
             "SAUSAGE",
             "TOMATOES",
+            "TOMATO",
             // not sure
-            "MOZZARELLA",
-            "PROVOLONE",
-            "FETA",
-            "CHEDDAR",
-            "PARMESAN",
-            "ROMANO",
-            "ASIAGO",
-            "BEEF",
-            "STEAK",
-            "CHICKEN",
-            "HAM",
-            "SALAMI",
-            "SPINACH",
-            "TUNA",
-            "PEPPERONCINI",
-            "BITCOIN",
-            "CORN",
-            "CAYENNE"
+            //"MOZZARELLA",
+            //"PROVOLONE",
+            //"FETA",
+            //"CHEDDAR",
+            //"PARMESAN",
+            //"ROMANO",
+            //"ASIAGO",
+            //"BEEF",
+            //"STEAK",
+            //"CHICKEN",
+            //"HAM",
+            //"SALAMI",
+            //"SPINACH",
+            //"TUNA",
+            //"PEPPERONCINI",
+            //"BITCOIN",
+            //"CORN",
+            //"CAYENNE",
+            //"MEATBALLS",
+            //"BROCCOLI",
+            //"ARTICHOKES",
+            //"SAGE",
+            //"PROSCIUTTO",
+            //"OREGANO",
+            //"MARINARA",
+            //"CRUST"
         };
 
         string[] shortIngredients = new string[] {
@@ -118,7 +131,7 @@ namespace LastSliceUWP.Models
                     break;
             }
 
-            return direction + ", ";
+            return direction + ",";
         }
 
         void findWordsUtil(ref List<Word> found, ref List<string> toppings, char[][] boggle, bool[][] visited, int M, int N, int i, int j, string str, string dir, int x, int y)
@@ -132,12 +145,12 @@ namespace LastSliceUWP.Models
                 word.x = y;
                 word.y = x;
                 word.word = str;
-                word.direction = dir.Substring(0, dir.Length - 2);
+                word.direction = dir.Substring(0, dir.Length - 1);
                 found.Add(word);
                 toppings.Add(str);
                 Debug.WriteLine(str);
                 Debug.WriteLine("({0},{1})", y, x);
-                Debug.WriteLine(dir.Substring(0, dir.Length-2));
+                Debug.WriteLine(dir.Substring(0, dir.Length-1));
             }
 
             // Traverse 8 adjacent cells of boggle[i][j]
@@ -151,6 +164,8 @@ namespace LastSliceUWP.Models
                     {
                         if (!visited[pair.Key][pair.Value] && isValidSubstring(str + boggle[pair.Key][pair.Value]))
                             findWordsUtil(
+                                ref found,
+                                ref toppings,
                                 boggle,
                                 visited,
                                 M,
@@ -158,7 +173,9 @@ namespace LastSliceUWP.Models
                                 pair.Key,
                                 pair.Value,
                                 str,
-                                dir + nextDir
+                                dir + nextDir,
+                                x,
+                                y
                             );
                     }
                 }

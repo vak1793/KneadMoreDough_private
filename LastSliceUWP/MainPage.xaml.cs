@@ -49,6 +49,8 @@ namespace LastSliceUWP
                     string puzzle = await challengeService.GetPuzzle();
                     Problem problem = JsonConvert.DeserializeObject<Problem>(puzzle);
                     DateTime startTime = problem.TimeIssued;
+                    Debug.WriteLine("Issued Time = {0}", startTime);
+                    Debug.WriteLine("Start Time = {0}", DateTime.Now);
 
                     ResultText.Text = puzzle;
                     
@@ -76,13 +78,13 @@ namespace LastSliceUWP
                     }
 
                     Solver solver = new Solver();
-                    Debug.WriteLine("*****************");
+                    //Debug.WriteLine("*****************");
 
                     Solution soln = new Solution();
                     soln.PuzzleId = problem.Id;
                     soln.Initials = "VAK";
                     soln.Words = solver.findWords(grid, problem.Puzzle["Lines"].Length, maxLength);
-                    Debug.WriteLine("*****************");
+                    //Debug.WriteLine("*****************");
                     //Word w = new Word();
                     //w.word = problem.Puzzle["Lines"][0];
                     //w.x = 0;
@@ -92,7 +94,7 @@ namespace LastSliceUWP
 
                     // TODO: Now show your Swagger and find the solution.
 
-                    Debug.WriteLine("Time taken = {0}s", DateTime.Now.Subtract(startTime).Seconds);
+                    Debug.WriteLine("End Time = {0}", DateTime.Now);
                     string solution = JsonConvert.SerializeObject(soln);
                     string solutionResponse = await challengeService.PostSolutionToPuzzle(solution);
 
